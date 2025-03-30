@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  simulations Simulation[]
+
+  @@map("workspaces")
+}
+
+enum DataSource {
+  DATABRICKS
+  SIMULATION
+}
+
+enum SimulationStatus {
+  DRAFT
+  PENDING
+  RUNNING
+  COMPLETED
+  ERROR
+}
+
+model Simulation {
+  id          String           @id @default(cuid())
+  name        String
+  status      SimulationStatus @default(DRAFT)
+  description String?
+  dataSource  DataSource       @default(DATABRICKS) @map("data_source")
+
+  ifoodDelivery   Boolean? @map("ifood_felivery")
+  totalOrders     Int?     @map("total_orders")
+  totalOrderValue Float?   @map("total_order_value")
+  lossValue       Float?   @map("loss_value")
+  disputedValue   Float?   @map("disputed_value")
+
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String    @map("workspace_id")
+
+  operator             String?
+  operatorNumber       Int?     @map("operator_number")
+  operatorIsPercentage Boolean? @map("operator_is_percentage")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("simulations")
+}
