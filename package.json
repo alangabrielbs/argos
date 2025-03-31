@@ -29,6 +29,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.6.2",
     "lucide-react": "^0.484.0",
+    "nanoid": "^5.1.5",
     "next": "15.2.4",
     "prisma": "^6.5.0",
     "react": "^19.0.0",

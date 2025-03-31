@@ -1,20 +1,10 @@
 import { cn } from '@/lib/utils'
-import { DataSource, SimulationStatus } from '@prisma/client'
-import { addHours, format, subHours } from 'date-fns'
+import { DataSource } from '@prisma/client'
+import { addHours, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import {
-  Check,
-  CheckCircle,
-  CheckCircle2,
-  Clock,
-  DatabaseBackup,
-  FileEdit,
-  Icon,
-  Loader,
-  LucideProps,
-  XCircle,
-} from 'lucide-react'
-import { JSX, memo, ReactNode } from 'react'
+import { Check, DatabaseBackup } from 'lucide-react'
+import Link from 'next/link'
+import { JSX, memo } from 'react'
 import { DatabricksIcon } from '../icons/databricks'
 import { SimulationsResponse } from './simulations-container'
 
@@ -31,24 +21,26 @@ export const SimulationTitle = ({
       <SimulationIcon simulation={simulation} />
 
       <div className="h-[24px] min-w-0 overflow-hidden transition-[height] group-data-[variant=loose]/card-list:h-[46px]">
-        <div className="flex items-center gap-2">
-          <div className="min-w-0 shrink grow-0 text-neutral-950">
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  'min-w-0 truncate font-semibold leading-6 text-neutral-800'
-                )}
-              >
-                <span className="text-muted-foreground">
-                  {simulation.workspace.name}
-                </span>{' '}
-                • {simulation.name}
-              </span>
+        <Link href={`/simulacoes/${simulation.id}`}>
+          <div className="flex items-center gap-2">
+            <div className="min-w-0 shrink grow-0 text-neutral-950">
+              <div className="flex items-center gap-2">
+                <span
+                  className={cn(
+                    'min-w-0 truncate font-semibold leading-6 text-neutral-800'
+                  )}
+                >
+                  <span className="text-muted-foreground">
+                    {simulation.workspace.name}
+                  </span>{' '}
+                  • {simulation.name}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <Details simulation={simulation} compact />
-        </div>
+            <Details simulation={simulation} compact />
+          </div>
+        </Link>
 
         <Details simulation={simulation} />
       </div>

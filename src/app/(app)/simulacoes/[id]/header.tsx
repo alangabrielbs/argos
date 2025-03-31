@@ -1,11 +1,9 @@
 'use client'
 
 import { useExecuteSimulation } from '@/components/modals/execute-simulation-modal'
-import { StatusLabels } from '@/components/simulations/simulation-details'
 import { TabSelect } from '@/components/tab-select'
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { useSimulation } from '@/lib/swr/use-simulation'
-import { cn } from '@/lib/utils'
 import { redirect, useRouter, useSelectedLayoutSegment } from 'next/navigation'
 
 export const SimularionHeader = () => {
@@ -36,14 +34,6 @@ export const SimularionHeader = () => {
     redirect(`/simulacoes/${simulation?.id}/${tab}`)
   }
 
-  const {
-    icon: Icon,
-    color,
-    bg,
-    border,
-    label,
-  } = StatusLabels[simulation.status]
-
   return (
     <div className="border-b border-neutral-200">
       <ExecuteSimulationModal />
@@ -55,7 +45,7 @@ export const SimularionHeader = () => {
             • {simulation.name}
           </h1>
           <p className="mb-2 mt-2 text-base text-neutral-600">
-            {simulation.description ?? 'Sem descrição'}
+            {simulation.description}
           </p>
         </div>
 
