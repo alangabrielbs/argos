@@ -3,7 +3,6 @@ import {
   CircleDollarSign,
   Clock,
   FileEdit,
-  Loader,
   LucideIcon,
   Play,
   ReceiptText,
@@ -18,7 +17,7 @@ import { cn } from '@/lib/utils'
 import { SimulationStatus } from '@prisma/client'
 import { Button } from '../ui/button-shadcn'
 
-const StatusLabels: Record<
+export const StatusLabels: Record<
   SimulationStatus,
   { icon: LucideIcon; color: string; bg: string; border: string; label: string }
 > = {

@@ -30,6 +30,7 @@ export const Header = () => {
             <li>
               <Button
                 text="Nova simulação"
+                variant="secondary"
                 onClick={() => {
                   setShowNewSimulationModal(true)
                 }}

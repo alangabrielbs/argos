@@ -106,6 +106,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                   variant === 'outline',
                 'bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white':
                   variant === 'danger-outline',
+                'bg-blue-400 text-blue-100 group-hover:bg-blue-500 group-hover:text-white':
+                  variant === 'success',
               },
               shortcutClassName
             )}
