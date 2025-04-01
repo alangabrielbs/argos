@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ZEUS',
+  title: 'Argos',
 }
 
 export default function RootLayout({

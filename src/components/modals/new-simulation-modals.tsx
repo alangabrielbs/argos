@@ -57,7 +57,6 @@ const NewSimulationModal = ({
   const form = useForm<z.infer<typeof createSimulationFormSchema>>({
     resolver: zodResolver(createSimulationFormSchema),
     defaultValues: {
-      type: ['Marketplace', 'Entrega'],
       date: {
         from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         to: new Date(),
@@ -238,7 +237,7 @@ const NewSimulationModal = ({
                 />
               )}
 
-              {isDatabricks && (
+              {/* {isDatabricks && (
                 <FormField
                   control={form.control}
                   name="type"
@@ -271,9 +270,9 @@ const NewSimulationModal = ({
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="baseOperator"
                 render={({ field }) => (
@@ -296,7 +295,7 @@ const NewSimulationModal = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

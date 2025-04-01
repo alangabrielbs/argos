@@ -35,18 +35,19 @@ enum SimulationStatus {
   ERROR
 }
 
-model Simulation {
-  id          String           @id @default(cuid())
-  name        String
-  status      SimulationStatus @default(DRAFT)
-  description String?
-  dataSource  DataSource       @default(DATABRICKS) @map("data_source")
+enum Type {
+  CSAT
+}
 
-  ifoodDelivery   Boolean? @map("ifood_felivery")
-  totalOrders     Int?     @map("total_orders")
-  totalOrderValue Float?   @map("total_order_value")
-  lossValue       Float?   @map("loss_value")
-  disputedValue   Float?   @map("disputed_value")
+// CSAT = ticker / totalOrders
+
+model Simulation {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  dataSource  DataSource @default(DATABRICKS) @map("data_source")
+
+  type Type
 
   startDate DateTime @map("start_date")
   endDate   DateTime @map("end_date")
@@ -63,4 +64,24 @@ model Simulation {
   deletedAt DateTime? @map("deleted_at")
 
   @@map("simulations")
+}
+
+model Execution {
+  id      String           @id @default(cuid())
+  status  SimulationStatus @default(PENDING)
+  error   String?
+  current Boolean?         @default(true)
+
+  filters Json?
+
+  ifoodDelivery Boolean? @map("ifood_felivery")
+
+  values Json?
+
+  executionTimeInSeconds Int? @map("execution_time_in_seconds")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("executions")
 }

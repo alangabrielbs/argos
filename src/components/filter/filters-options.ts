@@ -1,4 +1,10 @@
-import { Building2, LucideIcon, StoreIcon } from 'lucide-react'
+import {
+  Building2,
+  LucideIcon,
+  StoreIcon,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react'
 
 export type FilterOption = {
   field: {
@@ -48,7 +54,6 @@ export const FILTER_OPTIONS = [
           label: 'Rio de Janeiro',
         },
       ],
-      icon: Building2,
     },
   },
   {
@@ -78,7 +83,6 @@ export const FILTER_OPTIONS = [
           label: 'Bronze +',
         },
       ],
-      icon: Building2,
     },
   },
   {
@@ -88,15 +92,16 @@ export const FILTER_OPTIONS = [
       type: 'select',
       options: [
         {
-          id: 'yes',
+          id: 'true',
           label: 'Sim',
+          icon: ThumbsUp,
         },
         {
-          id: 'not',
+          id: 'false',
           label: 'Não',
+          icon: ThumbsDown,
         },
       ],
-      icon: Building2,
     },
   },
 ] satisfies FilterOption[]

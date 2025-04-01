@@ -44,13 +44,13 @@ export const FilterSelect = ({
             })
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[175px]">
             <SelectValue placeholder="Item" />
           </SelectTrigger>
           <SelectContent>
-            {FILTER_OPTIONS.map(option => (
-              <SelectItem key={option.field.id} value={option.field.id}>
-                {option.field.name}
+            {FILTER_OPTIONS.map(({ field: { id, name, icon: Icon } }) => (
+              <SelectItem key={id} value={id}>
+                {Icon && <Icon />} {name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -66,7 +66,7 @@ export const FilterSelect = ({
             )
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[175px]">
             <SelectValue placeholder="Condição" />
           </SelectTrigger>
           <SelectContent>
@@ -85,13 +85,13 @@ export const FilterSelect = ({
             onChangeValue(filter.id, value)
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[175px]">
             <SelectValue placeholder="Valor" />
           </SelectTrigger>
           <SelectContent>
-            {filter?.field?.field.options?.map(option => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.label}
+            {filter?.field?.field.options?.map(({ id, label, icon: Icon }) => (
+              <SelectItem key={id} value={id}>
+                {Icon && <Icon />} {label}
               </SelectItem>
             ))}
           </SelectContent>

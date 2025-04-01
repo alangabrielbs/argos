@@ -16,30 +16,30 @@ export const createSimulationFormSchema = z.object({
     required_error: 'Fonte de dados é obrigatória',
   }),
   simulationId: z.string().optional(),
-  type: z.array(
-    z.enum(['Marketplace', 'Entrega'], {
-      required_error: 'Tipo é obrigatório',
-    })
-  ),
-  baseOperator: z
-    .string({
-      required_error: 'Operador base é obrigatório',
-    })
-    .regex(/^([*\/+-]\d+(\.\d+)?%?|0)$/, {
-      message: 'Operador base inválido',
-    })
-    .transform(value => {
-      const operator = value[0]
-      const number = value.slice(1)
-      const isPercentage = value.endsWith('%')
-      const parsedNumber = Number.parseFloat(number)
+  // type: z.array(
+  //   z.enum(['Marketplace', 'Entrega'], {
+  //     required_error: 'Tipo é obrigatório',
+  //   })
+  // ),
+  // baseOperator: z
+  //   .string({
+  //     required_error: 'Operador base é obrigatório',
+  //   })
+  //   .regex(/^([*\/+-]\d+(\.\d+)?%?|0)$/, {
+  //     message: 'Operador base inválido',
+  //   })
+  //   .transform(value => {
+  //     const operator = value[0]
+  //     const number = value.slice(1)
+  //     const isPercentage = value.endsWith('%')
+  //     const parsedNumber = Number.parseFloat(number)
 
-      return {
-        operator,
-        number: number ? parsedNumber : '0',
-        isPercentage,
-      }
-    }),
+  //     return {
+  //       operator,
+  //       number: number ? parsedNumber : '0',
+  //       isPercentage,
+  //     }
+  //   }),
   date: z
     .object({
       from: z.date(),
@@ -66,21 +66,21 @@ export const createSimulationSchema = z.object({
     required_error: 'Fonte de dados é obrigatória',
   }),
   simulationId: z.string().optional(),
-  type: z.array(
-    z.enum(['Marketplace', 'Entrega'], {
-      required_error: 'Tipo é obrigatório',
-    })
-  ),
-  baseOperator: z.object({
-    operator: z.enum(['+', '-', '*', '/', '0']),
-    number: z
-      .string()
-      .regex(/^\d+(\.\d+)?$/, {
-        message: 'Número inválido',
-      })
-      .transform(value => (value ? Number.parseFloat(value) : 0)),
-    isPercentage: z.boolean(),
-  }),
+  // type: z.array(
+  //   z.enum(['Marketplace', 'Entrega'], {
+  //     required_error: 'Tipo é obrigatório',
+  //   })
+  // ),
+  // baseOperator: z.object({
+  //   operator: z.enum(['+', '-', '*', '/', '0']),
+  //   number: z
+  //     .string()
+  //     .regex(/^\d+(\.\d+)?$/, {
+  //       message: 'Número inválido',
+  //     })
+  //     .transform(value => (value ? Number.parseFloat(value) : 0)),
+  //   isPercentage: z.boolean(),
+  // }),
   date: z
     .object({
       from: z.string(),

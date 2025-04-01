@@ -29,9 +29,7 @@ export const SimularionHeader = () => {
   }
 
   if (selectedLayoutSegment === null) {
-    const tab = simulation.status === 'COMPLETED' ? 'resultados' : 'filtros'
-
-    redirect(`/simulacoes/${simulation?.id}/${tab}`)
+    redirect(`/simulacoes/${simulation?.id}/execucoes`)
   }
 
   return (
@@ -55,8 +53,7 @@ export const SimularionHeader = () => {
       <TabSelect
         variant="accent"
         options={[
-          { id: 'resultados', label: 'Resultados' },
-          { id: 'filtros', label: 'Filtros' },
+          { id: 'execucoes', label: 'Execuções' },
           { id: 'logs', label: 'Logs' },
         ]}
         selected={page}

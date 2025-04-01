@@ -52,29 +52,16 @@ const DATASOURCES = {
 }
 
 export const POST = async (request: Request) => {
-  const {
-    baseOperator,
-    dataSource,
-    date,
-    name,
-    type,
-    workspaceId,
-    simulationId,
-  } = await createSimulationSchema.parseAsync(await request.json())
+  const { dataSource, date, name, workspaceId, simulationId } =
+    await createSimulationSchema.parseAsync(await request.json())
 
   const simulation = await db.simulation.create({
     data: {
       name,
       workspaceId,
-      ifoodDelivery: type.includes('Entrega'),
       endDate: new Date(date.to),
       startDate: new Date(date.from),
       dataSource: DATASOURCES[dataSource],
-      ...(baseOperator.operator !== '0' && {
-        operator: baseOperator.operator,
-      }),
-      operatorNumber: baseOperator.operator === '0' ? 0 : baseOperator.number,
-      operatorIsPercentage: baseOperator.isPercentage,
     },
   })
 
