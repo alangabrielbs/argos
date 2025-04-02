@@ -5,6 +5,7 @@ import { TabSelect } from '@/components/tab-select'
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { useSimulation } from '@/lib/swr/use-simulation'
 import { redirect, useRouter, useSelectedLayoutSegment } from 'next/navigation'
+import { HeaderSkeleton } from './header-skeleton'
 
 export const SimularionHeader = () => {
   const { isLoading, simulation } = useSimulation()
@@ -21,11 +22,11 @@ export const SimularionHeader = () => {
   const page = selectedLayoutSegment === null ? '' : selectedLayoutSegment
 
   if (isLoading) {
-    return null
+    return <HeaderSkeleton />
   }
 
   if (!simulation) {
-    return null
+    redirect('/simulacoes')
   }
 
   if (selectedLayoutSegment === null) {
@@ -33,34 +34,38 @@ export const SimularionHeader = () => {
   }
 
   return (
-    <div className="border-b border-neutral-200">
-      <ExecuteSimulationModal />
+    <>
+      <div className="border-b border-neutral-200">
+        <ExecuteSimulationModal />
 
-      <div className="flex items-center justify-between">
-        <div className="w-full">
-          <h1 className="text-2xl font-semibold tracking-tight text-black">
-            <span className="text-slate-600">{simulation.workspace.name}</span>{' '}
-            • {simulation.name}
-          </h1>
-          <p className="mb-2 mt-2 text-base text-neutral-600">
-            {simulation.description}
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="w-full">
+            <h1 className="text-2xl font-semibold tracking-tight text-black">
+              <span className="text-slate-600">
+                {simulation.workspace.name}
+              </span>{' '}
+              • {simulation.name}
+            </h1>
+            <p className="mb-2 mt-2 text-base text-neutral-600">
+              {simulation.description}
+            </p>
+          </div>
+
+          <ExecuteSimulationModalButton />
         </div>
 
-        <ExecuteSimulationModalButton />
+        <TabSelect
+          variant="accent"
+          options={[
+            { id: 'execucoes', label: 'Execuções' },
+            { id: 'logs', label: 'Logs' },
+          ]}
+          selected={page}
+          onSelect={(url: string) => {
+            router.push(`/simulacoes/${simulation?.id}/${url}`)
+          }}
+        />
       </div>
-
-      <TabSelect
-        variant="accent"
-        options={[
-          { id: 'execucoes', label: 'Execuções' },
-          { id: 'logs', label: 'Logs' },
-        ]}
-        selected={page}
-        onSelect={(url: string) => {
-          router.push(`/simulacoes/${simulation?.id}/${url}`)
-        }}
-      />
-    </div>
+    </>
   )
 }

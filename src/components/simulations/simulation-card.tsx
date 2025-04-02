@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react'
 import { CardList } from '../card-list'
 import { SimulationDetails } from './simulation-details'
 import { SimulationTitle } from './simulation-title'

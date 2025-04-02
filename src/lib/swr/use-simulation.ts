@@ -9,7 +9,7 @@ export function useSimulation() {
 
   const { data, ...rest } = useSWR<{
     simulation: SimulationsResponse
-  }>(`/api/simulations/${id}`, fetcher, {
+  }>(id && `/api/simulations/${id}`, fetcher, {
     revalidateOnFocus: false,
   })
 

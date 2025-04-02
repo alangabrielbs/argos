@@ -7,16 +7,13 @@ export const GET = async (
 ) => {
   const { id } = await params
 
-  const simulation = await db.simulation.findUnique({
+  const executions = await db.execution.findMany({
     where: {
-      id,
-    },
-    include: {
-      workspace: true,
+      simulationId: id,
     },
   })
 
   return NextResponse.json({
-    simulation,
+    executions,
   })
 }

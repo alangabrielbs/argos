@@ -46,6 +46,9 @@ export const SimulationsContainer = () => {
 
 export type SimulationsResponse = Simulation & {
   workspace: Workspace
+  _count: {
+    executions: number
+  }
 }
 
 const SimulationsList = ({
