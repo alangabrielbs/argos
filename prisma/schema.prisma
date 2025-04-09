@@ -17,33 +17,21 @@ model Workspace {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  simulations Simulation[]
+  simulations             Simulation[]
+  databricksSQLDataSource DatabricksSQLDataSource[]
 
   @@map("workspaces")
 }
 
-enum DataSource {
-  DATABRICKS
-  SIMULATION
-}
-
 model Simulation {
-  id          String     @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   description String?
-  dataSource  DataSource @default(DATABRICKS) @map("data_source")
-
-  startDate DateTime @map("start_date")
-  endDate   DateTime @map("end_date")
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String    @map("workspace_id")
 
   executions Execution[]
-
-  operator             String?
-  operatorNumber       Int?     @map("operator_number")
-  operatorIsPercentage Boolean? @map("operator_is_percentage")
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -68,8 +56,8 @@ model Execution {
   error   String?
   current Boolean?        @default(true)
 
-  filters Json?
-  values  Json?
+  query  String?
+  values Json?
 
   readyStateAt DateTime? @map("ready_state_at")
   createdAt    DateTime  @default(now()) @map("created_at")
@@ -118,12 +106,36 @@ model Variable {
   description  String?
   key          String?
   exampleValue Float?  @map("example_value")
+  value        Float?
+  isConstant   Boolean @default(false) @map("is_constant")
 
   formulaId String  @map("formula_id")
   formula   Formula @relation(fields: [formulaId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([formulaId, name])
+}
+
+model DatabricksSQLDataSource {
+  id        String  @id @default(cuid())
+  name      String
+  token     String
+  hostname  String
+  httpPath  String  @map("http_path")
+  catalog   String  @default("")
+  schema    String  @default("")
+  notes     String?
+  structure String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  lastConnection DateTime? @map("last_connection")
+  connError      String?   @map("conn_error")
+  isDefault      Boolean   @default(false) @map("is_default")
+
+  workspaceId String    @map("workspace_id")
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
