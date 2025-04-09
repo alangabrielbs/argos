@@ -33,7 +33,8 @@
         "noDangerouslySetInnerHtml": "off"
       },
       "a11y": {
-        "useMediaCaption": "off"
+        "useMediaCaption": "off",
+        "useKeyWithClickEvents": "off"
       },
       "complexity": {
         "noForEach": "off"

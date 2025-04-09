@@ -228,6 +228,8 @@ const MultiSelectorTrigger = forwardRef<
     e.stopPropagation()
   }, [])
 
+  console.log({ value })
+
   return (
     <div
       ref={ref}

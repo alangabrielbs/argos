@@ -31,10 +31,18 @@ export const GET = async (request: Request) => {
         ],
       }),
       ...(kpi && {
-        formula: {
-          name: {
-            contains: kpi,
-            mode: 'insensitive',
+        executions: {
+          some: {
+            formulas: {
+              some: {
+                formula: {
+                  name: {
+                    contains: kpi,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            },
           },
         },
       }),

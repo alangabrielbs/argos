@@ -25,9 +25,9 @@ export const KpiDetails = ({
       >
         <div className="items-center flex gap-1.5 font-semibold whitespace-nowrap rounded-md px-1 py-px transition-colors group-hover:text-emerald-900">
           <FlaskConical className="text-muted-foreground size-4 shrink-0" />
-          {kpi._count.simulations}{' '}
-          {pluralize('simulação', kpi._count.simulations, {
-            plural: 'simulações',
+          {kpi._count.executions}{' '}
+          {pluralize('execução', kpi._count.executions, {
+            plural: 'execuções',
           })}
         </div>
       </Link>

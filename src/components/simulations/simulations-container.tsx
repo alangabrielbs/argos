@@ -15,7 +15,7 @@ export const SimulationsContainer = () => {
 
   return (
     <MaxWidthWrapper>
-      <div className="flex items-center gap-x-4 mb-4">
+      <div className="flex items-center mb-4 gap-x-4">
         <Button variant="outline" onClick={() => mutate()}>
           <RefreshCcw
             className={cn('size-4', {
@@ -60,21 +60,35 @@ const SimulationsList = ({
   loading?: boolean
   simulations?: SimulationsResponse[]
 }) => {
+  if (loading) {
+    return (
+      <CardList variant={view} loading={loading}>
+        {Array.from({ length: 12 }).map((_, idx) => (
+          <CardList.Card
+            key={idx}
+            outerClassName="pointer-events-none"
+            innerClassName="flex items-center gap-4"
+          >
+            <SimulationCardSkeleton />
+          </CardList.Card>
+        ))}
+      </CardList>
+    )
+  }
+
+  if (!simulations?.length) {
+    return (
+      <div className="text-center text-gray-500">
+        Não há simulações disponíveis no momento.
+      </div>
+    )
+  }
+
   return (
-    <CardList variant={view} loading={loading}>
-      {simulations?.length
-        ? simulations.map(simulation => (
-            <SimulationCard key={simulation.id} simulation={simulation} />
-          ))
-        : Array.from({ length: 12 }).map((_, idx) => (
-            <CardList.Card
-              key={idx}
-              outerClassName="pointer-events-none"
-              innerClassName="flex items-center gap-4"
-            >
-              <SimulationCardSkeleton />
-            </CardList.Card>
-          ))}
+    <CardList variant={view}>
+      {simulations.map(simulation => (
+        <SimulationCard key={simulation.id} simulation={simulation} />
+      ))}
     </CardList>
   )
 }

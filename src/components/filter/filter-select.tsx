@@ -71,9 +71,15 @@ export const FilterSelect = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="is">É</SelectItem>
-            <SelectItem value="notIs">Não é</SelectItem>
-            <SelectItem value="contains">Contém</SelectItem>
-            <SelectItem value="notContains">Não contém</SelectItem>
+            <SelectItem disabled value="notIs">
+              Não é
+            </SelectItem>
+            <SelectItem disabled value="contains">
+              Contém
+            </SelectItem>
+            <SelectItem disabled value="notContains">
+              Não contém
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

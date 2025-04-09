@@ -5,7 +5,7 @@ import { Formula } from '@prisma/client'
 
 export type KpisResponse = Formula & {
   _count: {
-    simulations: number
+    executions: number
   }
 }
 

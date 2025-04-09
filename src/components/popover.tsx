@@ -73,7 +73,11 @@ export function Popover({
   }
 
   return (
-    <PopoverPrimitive.Root open={openPopover} onOpenChange={setOpenPopover}>
+    <PopoverPrimitive.Root
+      open={openPopover}
+      onOpenChange={setOpenPopover}
+      modal
+    >
       <PopoverPrimitive.Trigger className="sm:inline-flex" asChild>
         {children}
       </PopoverPrimitive.Trigger>

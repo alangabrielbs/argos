@@ -88,7 +88,6 @@ const NewSimulationModal = ({
   })
 
   const isSimulation = form.watch('dataSource') === 'simulation'
-  const isDatabricks = form.watch('dataSource') === 'databricks'
   const workspaceId = form.watch('workspaceId')
 
   return (

@@ -2,10 +2,16 @@ import useSWR from 'swr'
 
 import { useRouterStuff } from '@/hooks/use-router-stuff'
 import { fetcher } from '@/lib/fetcher'
-import { Execution, Workspace } from '@prisma/client'
+import { Execution, Formula, FormulaExecution, Variable } from '@prisma/client'
 import { useParams } from 'next/navigation'
 
-export type ExecutionsResponse = Execution
+export type ExecutionsResponse = Execution & {
+  formulas: (FormulaExecution & {
+    formula: Formula & {
+      variables: Variable[]
+    }
+  })[]
+}
 
 export function useExecutions() {
   const { getQueryString } = useRouterStuff()

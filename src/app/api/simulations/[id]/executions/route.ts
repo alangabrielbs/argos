@@ -11,6 +11,17 @@ export const GET = async (
     where: {
       simulationId: id,
     },
+    include: {
+      formulas: {
+        include: {
+          formula: {
+            include: {
+              variables: true,
+            },
+          },
+        },
+      },
+    },
   })
 
   return NextResponse.json({

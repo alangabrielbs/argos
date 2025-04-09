@@ -1,9 +1,14 @@
 import {
-  Building2,
+  BikeIcon,
+  BoxesIcon,
+  Clock,
   LucideIcon,
-  StoreIcon,
-  ThumbsDown,
-  ThumbsUp,
+  MoreHorizontal,
+  PizzaIcon,
+  ShieldAlertIcon,
+  ShoppingBasketIcon,
+  SwatchBookIcon,
+  UserIcon,
 } from 'lucide-react'
 
 export type FilterOption = {
@@ -23,85 +28,62 @@ export type FilterOption = {
 export const FILTER_OPTIONS = [
   {
     field: {
-      id: 'company',
-      name: 'Empresa',
+      id: 'grupo_denominador',
+      name: 'Grupo Denominador',
       type: 'select',
       options: [
         {
-          id: 'gpa',
-          label: 'Grupo Pão de Açúcar',
+          id: 'GERAL',
+          label: 'GERAL',
+          icon: BoxesIcon,
         },
         {
-          id: 'mcdonalds',
-          label: "McDonald's",
+          id: 'FOOD',
+          label: 'FOOD',
+          icon: PizzaIcon,
+        },
+        {
+          id: 'GROCERIES',
+          label: 'GROCERIES',
+          icon: ShoppingBasketIcon,
         },
       ],
-      icon: StoreIcon,
+      icon: BoxesIcon,
     },
   },
   {
     field: {
-      id: 'state',
-      name: 'Estado',
+      id: 'tema_projetado',
+      name: 'Tema Projetado',
       type: 'select',
       options: [
         {
-          id: 'sp',
-          label: 'São Paulo',
+          id: 'Atraso',
+          label: 'Atraso',
+          icon: Clock,
         },
         {
-          id: 'rj',
-          label: 'Rio de Janeiro',
+          id: 'Consumer',
+          label: 'Consumer',
+          icon: UserIcon,
+        },
+        {
+          id: 'Fraude Maquininha',
+          label: 'Fraude Maquininha',
+          icon: ShieldAlertIcon,
+        },
+        {
+          id: 'Driver',
+          label: 'Driver',
+          icon: BikeIcon,
+        },
+        {
+          id: 'Outros',
+          label: 'Outros',
+          icon: MoreHorizontal,
         },
       ],
-    },
-  },
-  {
-    field: {
-      id: 'driver-category',
-      name: 'Categoria do driver',
-      type: 'select',
-      options: [
-        {
-          id: 'gold',
-          label: 'Ouro',
-        },
-        {
-          id: 'silver',
-          label: 'Prata',
-        },
-        {
-          id: 'silver-plus',
-          label: 'Prata +',
-        },
-        {
-          id: 'bronze',
-          label: 'Bronze',
-        },
-        {
-          id: 'bronze-plus',
-          label: 'Bronze +',
-        },
-      ],
-    },
-  },
-  {
-    field: {
-      id: 'ifood-delivery',
-      name: 'Entrega iFood',
-      type: 'select',
-      options: [
-        {
-          id: 'true',
-          label: 'Sim',
-          icon: ThumbsUp,
-        },
-        {
-          id: 'false',
-          label: 'Não',
-          icon: ThumbsDown,
-        },
-      ],
+      icon: SwatchBookIcon,
     },
   },
 ] satisfies FilterOption[]
