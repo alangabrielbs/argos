@@ -208,17 +208,9 @@ const NewSimulationModal = ({
                           Simulation & { workspace: { name: string } }
                         >
                           fetcher={query => getSimulations(query, workspaceId)}
-                          renderOption={item => (
-                            <div>
-                              {item.workspace.name} • {item.name}
-                            </div>
-                          )}
+                          renderOption={item => <div>{item.name}</div>}
                           getOptionValue={item => item.id}
-                          getDisplayValue={item => (
-                            <div>
-                              {item.workspace.name} • {item.name}
-                            </div>
-                          )}
+                          getDisplayValue={item => <div>{item.name}</div>}
                           label="Simulação"
                           placeholder="Selecione uma simulação"
                           width="601px"

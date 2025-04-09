@@ -41,10 +41,7 @@ export const SimularionHeader = () => {
         <div className="flex items-center justify-between">
           <div className="w-full">
             <h1 className="text-2xl font-semibold tracking-tight text-black">
-              <span className="text-slate-600">
-                {simulation.workspace.name}
-              </span>{' '}
-              • {simulation.name}
+              {simulation.name}
             </h1>
             <p className="mb-2 mt-2 text-base text-neutral-600">
               {simulation.description}

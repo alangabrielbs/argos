@@ -30,10 +30,7 @@ export const SimulationTitle = ({
                     'min-w-0 truncate font-semibold leading-6 text-neutral-800'
                   )}
                 >
-                  <span className="text-muted-foreground">
-                    {simulation.workspace.name}
-                  </span>{' '}
-                  • {simulation.name}
+                  {simulation.name}
                 </span>
               </div>
             </div>
