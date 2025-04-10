@@ -1,7 +1,12 @@
+'use client'
+
 import { MaxWidthWrapper } from '@/components/max-width-wrapper'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 export default function SettingsPage() {
+  const { slug } = useParams() as { slug?: string }
+
   return (
     <div>
       <div className="bg-slate-50 py-0.5 -mt-1">
@@ -10,7 +15,7 @@ export default function SettingsPage() {
             <ul className="flex justify-end items-center gap-x-6">
               <li>
                 <Link
-                  href="/"
+                  href={`/${slug}/configuracoes/conexoes`}
                   className="text-muted-foreground font-medium text-sm hover:underline"
                 >
                   Conexões
@@ -18,7 +23,7 @@ export default function SettingsPage() {
               </li>
               <li>
                 <Link
-                  href="/"
+                  href={`/${slug}/configuracoes/snippets`}
                   className="text-muted-foreground font-medium text-sm hover:underline"
                 >
                   Snippets
@@ -26,7 +31,7 @@ export default function SettingsPage() {
               </li>
               <li>
                 <Link
-                  href="/"
+                  href={`/${slug}/configuracoes/variaveis`}
                   className="text-muted-foreground font-medium text-sm hover:underline"
                 >
                   Variáveis
