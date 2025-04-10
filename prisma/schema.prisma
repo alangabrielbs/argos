@@ -19,6 +19,7 @@ model Workspace {
 
   simulations             Simulation[]
   databricksSQLDataSource DatabricksSQLDataSource[]
+  snippetFolders          SnippetFolder[]
 
   @@map("workspaces")
 }
@@ -168,4 +169,7 @@ model SnippetFolder {
   parentFolder SnippetFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
   parentId     String?         @map("parent_id")
   childFolders SnippetFolder[] @relation("FolderHierarchy")
+
+  workspaceId String    @map("workspace_id")
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
