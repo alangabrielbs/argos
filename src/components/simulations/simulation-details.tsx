@@ -5,16 +5,18 @@ import { useCardList } from '@/components/card-list/card-list'
 import { SimulationsResponse } from '@/components/simulations/simulations-container'
 import { pluralize } from '@/lib/pluralize'
 import { cn } from '@/lib/utils'
+import { useParams } from 'next/navigation'
 
 export const SimulationDetails = ({
   simulation,
 }: { simulation: SimulationsResponse }) => {
   const { variant } = useCardList()
+  const { slug } = useParams() as { slug?: string }
 
   return (
     <div className="flex items-center gap-x-2">
       <Link
-        href={`/simulacoes/${simulation.id}/execucoes`}
+        href={`/${slug}/simulacoes/${simulation.id}/execucoes`}
         className={cn(
           'group overflow-hidden rounded-md border border-neutral-200 bg-neutral-50 p-0.5 text-sm text-neutral-600 transition-colors',
           variant === 'loose' ? 'hover:bg-neutral-100' : 'hover:bg-white'

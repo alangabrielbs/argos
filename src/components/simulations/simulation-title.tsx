@@ -1,27 +1,20 @@
 import { cn } from '@/lib/utils'
-import { DataSource } from '@prisma/client'
-import { addHours, format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { Check, DatabaseBackup } from 'lucide-react'
 import Link from 'next/link'
-import { JSX, memo } from 'react'
-import { DatabricksIcon } from '../icons/databricks'
+import { useParams } from 'next/navigation'
+import { memo } from 'react'
 import { SimulationsResponse } from './simulations-container'
-
-const LOGO_SIZE_CLASS_NAME =
-  'size-3 sm:size-5 group-data-[variant=loose]/card-list:sm:size-5'
 
 export const SimulationTitle = ({
   simulation,
 }: {
   simulation: SimulationsResponse
 }) => {
+  const { slug } = useParams() as { slug: string | null }
+
   return (
     <div className="flex h-[32px] items-center gap-3 transition-[height] group-data-[variant=loose]/card-list:h-[60px]">
-      <SimulationIcon simulation={simulation} />
-
       <div className="h-[24px] min-w-0 overflow-hidden transition-[height] group-data-[variant=loose]/card-list:h-[46px]">
-        <Link href={`/simulacoes/${simulation.id}`}>
+        <Link href={`/${slug}/simulacoes/${simulation.id}`}>
           <div className="flex items-center gap-2">
             <div className="min-w-0 shrink grow-0 text-neutral-950">
               <div className="flex items-center gap-2">
@@ -45,59 +38,6 @@ export const SimulationTitle = ({
   )
 }
 
-const Icons: Record<DataSource, () => JSX.Element> = {
-  DATABRICKS: () => <DatabricksIcon className={LOGO_SIZE_CLASS_NAME} />,
-  SIMULATION: () => (
-    <DatabaseBackup
-      className={cn('text-muted-foreground', LOGO_SIZE_CLASS_NAME)}
-    />
-  ),
-}
-
-const SimulationIcon = memo(
-  ({ simulation }: { simulation: SimulationsResponse }) => {
-    const Icon = Icons[simulation.dataSource]
-
-    return (
-      <button
-        type="button"
-        className={cn(
-          'group relative hidden shrink-0 items-center justify-center outline-none sm:flex'
-        )}
-      >
-        <div className="absolute inset-0 shrink-0 rounded-full border border-neutral-200 opacity-0 transition-opacity group-data-[variant=loose]/card-list:sm:opacity-100">
-          <div className="h-full w-full rounded-full border border-white bg-gradient-to-t from-neutral-100" />
-        </div>
-        <div className="relative transition-[padding,transform] group-hover:scale-90 group-data-[variant=loose]/card-list:sm:p-2">
-          <div className="hidden sm:block">
-            <Icon />
-          </div>
-          <div className="size-5 group-data-[variant=loose]/card-list:size-6 sm:hidden" />
-        </div>
-
-        {/* Checkbox */}
-        <div
-          className={cn(
-            'pointer-events-none absolute inset-0 flex items-center justify-center rounded-full border border-neutral-400 bg-white ring-0 ring-black/5',
-            'opacity-100 max-sm:ring sm:opacity-0',
-            'transition-all duration-150 group-hover:opacity-100 group-hover:ring group-focus-visible:opacity-100 group-focus-visible:ring',
-            'group-data-[checked=true]:opacity-100'
-          )}
-        >
-          <div
-            className={cn(
-              'rounded-full bg-neutral-800 p-[1px] group-data-[variant=loose]/card-list:p-1.5',
-              'scale-90 opacity-0 transition-[transform,opacity] duration-100 group-data-[checked=true]:scale-100 group-data-[checked=true]:opacity-100'
-            )}
-          >
-            <Check className="size-3 text-white" />
-          </div>
-        </div>
-      </button>
-    )
-  }
-)
-
 const Details = memo(
   ({
     simulation,
@@ -117,13 +57,14 @@ const Details = memo(
       >
         <div className="flex min-w-0 items-center gap-1">
           <span className="truncate text-neutral-500">
-            {format(addHours(simulation.startDate, 3), "dd 'de' MMM 'de' y", {
+            {simulation.description}
+            {/* {format(addHours(simulation.startDate, 3), "dd 'de' MMM 'de' y", {
               locale: ptBR,
             })}{' '}
             -{' '}
             {format(addHours(simulation.endDate, 3), "dd 'de' MMM 'de' y", {
               locale: ptBR,
-            })}
+            })} */}
           </span>
         </div>
       </div>

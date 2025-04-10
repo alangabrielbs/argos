@@ -5,6 +5,7 @@ import { KpisResponse } from '@/lib/swr/use-kpis'
 import { cn } from '@/lib/utils'
 import { FlaskConical } from 'lucide-react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useCardList } from '../card-list/card-list'
 
 export const KpiDetails = ({
@@ -13,11 +14,12 @@ export const KpiDetails = ({
   kpi: KpisResponse
 }) => {
   const { variant } = useCardList()
+  const { slug } = useParams() as { slug: string | null }
 
   return (
     <div className="flex items-center gap-x-2">
       <Link
-        href={`/simulacoes?kpi=${kpi.name}`}
+        href={`/${slug}/simulacoes?kpi=${kpi.name}`}
         className={cn(
           'group overflow-hidden rounded-md border border-neutral-200 bg-neutral-50 p-0.5 text-sm text-neutral-600 transition-colors',
           variant === 'loose' ? 'hover:bg-neutral-100' : 'hover:bg-white'

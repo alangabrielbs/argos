@@ -4,7 +4,7 @@ import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { KpisResponse, useKpis } from '@/lib/swr/use-kpis'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { CardList } from '../card-list'
 import { MaxWidthWrapper } from '../max-width-wrapper'
@@ -15,10 +15,12 @@ import { KpiCard } from './kpi-card'
 
 export const KpisContainer = () => {
   const router = useRouter()
+  const { slug } = useParams() as { slug?: string }
+
   const [view, setView] = useState<'compact' | 'loose'>('compact')
   const { kpis, isLoading, isValidating } = useKpis()
 
-  useKeyboardShortcut('e', () => router.push('/kpis/novo'))
+  useKeyboardShortcut('e', () => router.push(`/${slug}/kpis/novo`))
 
   return (
     <MaxWidthWrapper>
@@ -40,7 +42,7 @@ export const KpisContainer = () => {
               'group cursor-pointer flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md border px-4 text-sm',
               buttonVariants({ variant: 'success', size: 'default' })
             )}
-            href="/kpis/novo"
+            href={`/${slug}/kpis/novo`}
           >
             Novo KPI
             <kbd

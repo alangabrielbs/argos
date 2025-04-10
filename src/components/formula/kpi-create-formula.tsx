@@ -12,7 +12,7 @@ import {
 
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { mutate } from 'swr'
@@ -68,6 +68,8 @@ const createKpiSchema = z.object({
 
 export function KpiCreationForm() {
   const router = useRouter()
+  const { slug } = useParams() as { slug: string | null }
+
   const form = useForm<z.infer<typeof createKpiSchema>>({
     resolver: zodResolver(createKpiSchema),
     defaultValues: {
@@ -100,9 +102,8 @@ export function KpiCreationForm() {
       return
     }
 
-    console.log(data)
     try {
-      const response = await fetch('/api/kpis', {
+      const response = await fetch(`/api/${slug}/kpis`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -111,11 +112,11 @@ export function KpiCreationForm() {
       })
 
       if (response.ok) {
-        await mutate('/api/kpis')
+        await mutate(`/api/${slug}/kpis`)
 
         const data = await response.json()
 
-        router.push('/kpis')
+        router.push(`/${slug}/kpis`)
       }
     } catch (error) {
       console.error(error)

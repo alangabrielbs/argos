@@ -2,18 +2,20 @@
 
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useModal } from './modals/modal-provider'
 import { Button } from './ui/button'
 
 export const Header = () => {
   const { setShowNewSimulationModal } = useModal()
+  const { slug } = useParams() as { slug?: string }
 
   useKeyboardShortcut('s', () => setShowNewSimulationModal(true))
 
   return (
     <header>
       <div className="container mx-auto py-4 flex items-center justify-between">
-        <Link href="/">
+        <Link href={`/${slug}`}>
           <span className="font-semibold">ARGOS</span>
         </Link>
 
@@ -21,7 +23,7 @@ export const Header = () => {
           <ul className="flex items-center gap-x-6">
             <li>
               <Link
-                href="/kpis"
+                href={`/${slug}/kpis`}
                 className="hover:underline text-muted-foreground font-medium text-sm"
               >
                 KPI's
@@ -29,7 +31,7 @@ export const Header = () => {
             </li>
             <li>
               <Link
-                href="/simulacoes"
+                href={`/${slug}/simulacoes`}
                 className="hover:underline text-muted-foreground font-medium text-sm"
               >
                 Simulações

@@ -2,6 +2,7 @@ import useSWR from 'swr'
 
 import { fetcher } from '@/lib/fetcher'
 import { Formula } from '@prisma/client'
+import { useParams, useSearchParams } from 'next/navigation'
 
 export type KpisResponse = Formula & {
   _count: {
@@ -10,9 +11,15 @@ export type KpisResponse = Formula & {
 }
 
 export function useKpis() {
+  let { slug } = useParams() as { slug: string | null }
+  const searchParams = useSearchParams()
+  if (!slug) {
+    slug = searchParams.get('slug') || searchParams.get('workspace')
+  }
+
   const { data, ...rest } = useSWR<{
     formulas: KpisResponse[]
-  }>('/api/kpis', fetcher, {
+  }>(`/api/${slug}/kpis`, fetcher, {
     dedupingInterval: 20000,
     keepPreviousData: true,
   })

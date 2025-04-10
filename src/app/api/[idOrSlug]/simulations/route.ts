@@ -1,12 +1,13 @@
 import db from '@/lib/db'
 import { getSearchParams } from '@/lib/urls'
 import { createSimulationSchema } from '@/lib/zod/schemas/simulations'
-import { DataSource } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 export const GET = async (request: Request) => {
   const searchParams = getSearchParams(request.url)
   const { query, workspaceId, kpi } = searchParams
+
+  console.log({ kpi })
 
   const simulations = await db.simulation.findMany({
     where: {
@@ -48,6 +49,7 @@ export const GET = async (request: Request) => {
       }),
     },
     include: {
+      executions: true,
       workspace: true,
       _count: {
         select: {
@@ -66,24 +68,14 @@ export const GET = async (request: Request) => {
   return NextResponse.json({ simulations })
 }
 
-const DATASOURCES = {
-  databricks: DataSource.DATABRICKS,
-  simulation: DataSource.SIMULATION,
-}
-
 export const POST = async (request: Request) => {
-  const { dataSource, date, name, workspaceId, simulationId } =
-    await createSimulationSchema.parseAsync(await request.json())
+  const { name } = await createSimulationSchema.parseAsync(await request.json())
 
-  const simulation = await db.simulation.create({
-    data: {
-      name,
-      workspaceId,
-      endDate: new Date(date.to),
-      startDate: new Date(date.from),
-      dataSource: DATASOURCES[dataSource],
-    },
-  })
+  // const simulation = await db.simulation.create({
+  //   data: {
+  //     name,
+  //   },
+  // })
 
-  return NextResponse.json({ simulation })
+  return NextResponse.json({ simulation: 'ok' })
 }

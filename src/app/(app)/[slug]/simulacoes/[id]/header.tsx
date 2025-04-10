@@ -4,12 +4,18 @@ import { useExecuteSimulation } from '@/components/modals/execute-simulation-mod
 import { TabSelect } from '@/components/tab-select'
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { useSimulation } from '@/lib/swr/use-simulation'
-import { redirect, useRouter, useSelectedLayoutSegment } from 'next/navigation'
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSelectedLayoutSegment,
+} from 'next/navigation'
 import { HeaderSkeleton } from './header-skeleton'
 
 export const SimularionHeader = () => {
   const { isLoading, simulation } = useSimulation()
   const router = useRouter()
+  const { slug } = useParams() as { slug: string | null }
 
   const {
     ExecuteSimulationModal,
@@ -26,11 +32,11 @@ export const SimularionHeader = () => {
   }
 
   if (!simulation) {
-    redirect('/simulacoes')
+    redirect(`/${slug}/simulacoes`)
   }
 
   if (selectedLayoutSegment === null) {
-    redirect(`/simulacoes/${simulation?.id}/execucoes`)
+    redirect(`/${slug}/simulacoes/${simulation?.id}/execucoes`)
   }
 
   return (

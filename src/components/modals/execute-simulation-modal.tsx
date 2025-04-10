@@ -6,12 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Formula } from '@prisma/client'
 import { Plus, X } from 'lucide-react'
 import { nanoid } from 'nanoid'
+import { useParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AnimatedSizeContainer } from '../animated-size-container'
 import { Filter, OnChangeField } from '../filter/filter'
 import { FilterSelect } from '../filter/filter-select'
+import { SqlEditor } from '../sql-editor'
 import { AsyncSelect } from '../ui/async-select'
 import { Button } from '../ui/button'
 import {
@@ -47,6 +49,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '../ui/sheet'
+import { useSqlSnippetsModal } from './sql-snippets-modal'
 
 const createExecuteSimulationFormSchema = z.object({
   request: z
@@ -75,12 +78,14 @@ const ExecuteSimulationModal = ({
   showExecuteSimulationModal: boolean
   setShowExecuteSimulationModal: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
+  const { slug } = useParams() as { slug: string | null }
   const form = useForm<z.infer<typeof createExecuteSimulationFormSchema>>({
     resolver: zodResolver(createExecuteSimulationFormSchema),
     defaultValues: {
       formulaId: [],
     },
   })
+  const { SqlSnippetsModal, SqlSnippetsButton } = useSqlSnippetsModal()
 
   const onSubmit = form.handleSubmit(data => {
     console.log({ data })
@@ -181,101 +186,112 @@ const ExecuteSimulationModal = ({
   ]
 
   return (
-    <Sheet
-      open={showExecuteSimulationModal}
-      onOpenChange={setShowExecuteSimulationModal}
-    >
-      <SheetContent
-        className="m-3 rounded-md h-[initial] w-[650px] !max-w-full px-0 overflow-hidden pb-10"
-        hiddenCloseButton
+    <>
+      <Sheet
+        open={showExecuteSimulationModal}
+        onOpenChange={setShowExecuteSimulationModal}
       >
-        <SheetHeader className="flex-row items-center justify-between px-6 pb-4 space-y-0 border-b">
-          <SheetTitle>Executar simulação</SheetTitle>
+        <SheetContent
+          className="m-3 rounded-md h-[initial] w-[650px] !max-w-full px-0 overflow-hidden pb-10"
+          hiddenCloseButton
+        >
+          <SheetHeader className="flex-row items-center justify-between px-6 pb-4 space-y-0 border-b">
+            <SheetTitle>Executar simulação</SheetTitle>
 
-          <div className="flex items-center gap-x-4">
-            <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-              <X className="w-4 h-4" />
-              <span className="sr-only">Fechar</span>
-            </SheetClose>
-          </div>
-        </SheetHeader>
+            <div className="flex items-center gap-x-4">
+              <SheetClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                <X className="w-4 h-4" />
+                <span className="sr-only">Fechar</span>
+              </SheetClose>
+            </div>
+          </SheetHeader>
 
-        <div className="">
-          <AnimatedSizeContainer
-            height
-            className="rounded-[inherit] px-6"
-            style={{ transform: 'translateZ(0)' }}
-          >
-            <Form {...form}>
-              <form onSubmit={onSubmit} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="request"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Conexão</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+          <div className="">
+            <AnimatedSizeContainer
+              height
+              className="rounded-[inherit] px-6"
+              style={{ transform: 'translateZ(0)' }}
+            >
+              <Form {...form}>
+                <form onSubmit={onSubmit} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="request"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Conexão</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione uma fonte de dados" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Unit_Projetado">
+                              <div className="flex items-center gap-x-2">
+                                Unit Projetado
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          A fonte de dados é a tabela que será utilizada na
+                          execução.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="formulaId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>KPI</FormLabel>
                         <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione uma fonte de dados" />
-                          </SelectTrigger>
+                          <MultiSelection<Formula>
+                            fetcher={value =>
+                              skipRequestWithDeduplication(
+                                `kpis-${value}`,
+                                () =>
+                                  getKpis({
+                                    slug: slug as string,
+                                    query: value,
+                                  })
+                              )
+                            }
+                            options={options.map(options => ({
+                              value: options.id,
+                              label: options.name,
+                            }))}
+                            label="KPI"
+                            noResultsMessage="Nenhum KPI encontrado."
+                            renderOption={item => <div>{item.name}</div>}
+                            getOptionValue={item => item.id}
+                            getDisplayValue={item => <div>{item.name}</div>}
+                            value={field.value}
+                            onValueSelected={field.onChange}
+                            placeholder="Selecione um ou mais KPIs"
+                          />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Unit_Projetado">
-                            <div className="flex items-center gap-x-2">
-                              Unit Projetado
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        A fonte de dados é a tabela que será utilizada na
-                        execução.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormDescription>
+                          Selecione o KPI que deseja calcular.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="formulaId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>KPI</FormLabel>
-                      <FormControl>
-                        <MultiSelection<Formula>
-                          fetcher={value =>
-                            skipRequestWithDeduplication(`kpis-${value}`, () =>
-                              getKpis(value)
-                            )
-                          }
-                          options={options.map(options => ({
-                            value: options.id,
-                            label: options.name,
-                          }))}
-                          label="KPI"
-                          noResultsMessage="Nenhum KPI encontrado."
-                          renderOption={item => <div>{item.name}</div>}
-                          getOptionValue={item => item.id}
-                          getDisplayValue={item => <div>{item.name}</div>}
-                          value={field.value}
-                          onValueSelected={field.onChange}
-                          placeholder="Selecione um ou mais KPIs"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Selecione o KPI que deseja calcular.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <div>
+                    <SqlSnippetsButton />
+                    <SqlEditor />
+                  </div>
 
-                {/* <div>
+                  {/* <div>
                   <Label className="data-[error=true]:text-destructive">
                     Filtros
                   </Label>
@@ -313,13 +329,16 @@ const ExecuteSimulationModal = ({
                     </div>
                   </div>
                 </div> */}
-                <Button type="submit" text="Criar execução" />
-              </form>
-            </Form>
-          </AnimatedSizeContainer>
-        </div>
-      </SheetContent>
-    </Sheet>
+                  <Button type="submit" text="Criar execução" />
+                </form>
+              </Form>
+            </AnimatedSizeContainer>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <SqlSnippetsModal />
+    </>
   )
 }
 
@@ -342,7 +361,7 @@ const ExecuteSimulationModalButton = ({
 
 export const useExecuteSimulation = () => {
   const [showExecuteSimulationModal, setShowExecuteSimulationModal] =
-    useState(false)
+    useState(true)
 
   const ExecuteSimulationModalCallback = useCallback(() => {
     return (
