@@ -38,14 +38,12 @@ export const Header = () => {
               </Link>
             </li>
             <li>
-              <Button
-                text="Nova simulação"
-                variant="secondary"
-                onClick={() => {
-                  setShowNewSimulationModal(true)
-                }}
-                shortcut="S"
-              />
+              <Link
+                href={`/${slug}/configuracoes`}
+                className="hover:underline text-muted-foreground font-medium text-sm"
+              >
+                Configurações
+              </Link>
             </li>
           </ul>
         </nav>
