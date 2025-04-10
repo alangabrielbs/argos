@@ -91,63 +91,6 @@ const ExecuteSimulationModal = ({
     console.log({ data })
   })
 
-  const [filters, setFilters] = useState<Filter[]>([
-    {
-      id: nanoid(),
-      field: null,
-      condition: 'is',
-      value: '',
-    },
-  ])
-  const onChangeField = ({ id, field }: OnChangeField) => {
-    setFilters(prevFilters =>
-      prevFilters.map(filter => {
-        if (filter.id === id) {
-          return {
-            ...filter,
-            field,
-          }
-        }
-        return filter
-      })
-    )
-  }
-
-  const onChangeCondition = (
-    id: string,
-    condition: 'is' | 'notIs' | 'contains' | 'notContains'
-  ) => {
-    setFilters(prevFilters =>
-      prevFilters.map(filter => {
-        if (filter.id === id) {
-          return {
-            ...filter,
-            condition,
-          }
-        }
-        return filter
-      })
-    )
-  }
-
-  const onChangeValue = (id: string, value: string) => {
-    setFilters(prevFilters =>
-      prevFilters.map(filter => {
-        if (filter.id === id) {
-          return {
-            ...filter,
-            value,
-          }
-        }
-        return filter
-      })
-    )
-  }
-
-  const onRemoveFilter = (id: string) => {
-    setFilters(prevFilters => prevFilters.filter(filter => filter.id !== id))
-  }
-
   const options = [
     {
       id: 'cm956zcd30009sf0ymedaj704',
@@ -264,10 +207,6 @@ const ExecuteSimulationModal = ({
                                   })
                               )
                             }
-                            options={options.map(options => ({
-                              value: options.id,
-                              label: options.name,
-                            }))}
                             label="KPI"
                             noResultsMessage="Nenhum KPI encontrado."
                             renderOption={item => <div>{item.name}</div>}
@@ -361,7 +300,7 @@ const ExecuteSimulationModalButton = ({
 
 export const useExecuteSimulation = () => {
   const [showExecuteSimulationModal, setShowExecuteSimulationModal] =
-    useState(true)
+    useState(false)
 
   const ExecuteSimulationModalCallback = useCallback(() => {
     return (

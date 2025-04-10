@@ -25,15 +25,8 @@ import { cn } from '@/lib/utils'
 import { Check, ChevronDown, LoaderIcon, SearchIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
-const tabTitles = ['add', 'remove'] as const
-type tabTitleType = (typeof tabTitles)[number]
-
 type MultiSelectionProps<T> = {
   value?: string[]
-  options: {
-    label: string
-    value: string
-  }[]
   onValueSelected: (selection?: string[]) => void
   isLoading?: boolean
   preload?: boolean

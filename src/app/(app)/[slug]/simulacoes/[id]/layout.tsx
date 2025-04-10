@@ -1,3 +1,4 @@
+import { MaxWidthWrapper } from '@/components/max-width-wrapper'
 import { SimularionHeader } from './header'
 
 export default function SimulationLayout({
@@ -6,9 +7,9 @@ export default function SimulationLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="grid gap-4">
+    <MaxWidthWrapper className="grid gap-4">
       <SimularionHeader />
       {children}
-    </div>
+    </MaxWidthWrapper>
   )
 }
