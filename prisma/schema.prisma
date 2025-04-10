@@ -139,3 +139,33 @@ model DatabricksSQLDataSource {
   workspaceId String    @map("workspace_id")
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
+
+model SqlSnippet {
+  id            String  @id @default(cuid())
+  name          String
+  description   String?
+  code          String
+  documentation String?
+  isPublic      Boolean @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  folder   SnippetFolder? @relation(fields: [folderId], references: [id])
+  folderId String?        @map("folder_id")
+}
+
+model SnippetFolder {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  isPublic    Boolean @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  sqlSnippets  SqlSnippet[]
+  parentFolder SnippetFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+  parentId     String?         @map("parent_id")
+  childFolders SnippetFolder[] @relation("FolderHierarchy")
+}
