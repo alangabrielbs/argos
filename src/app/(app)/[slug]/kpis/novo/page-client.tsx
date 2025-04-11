@@ -1,10 +1,11 @@
 'use client'
 
 import { KpiCreationForm } from '@/components/formula/kpi-create-formula'
+import { MaxWidthWrapper } from '@/components/max-width-wrapper'
 
 export const NewKpiPageClient = () => {
   return (
-    <div>
+    <MaxWidthWrapper>
       <h1 className="text-2xl font-semibold tracking-tight text-black">
         Novo KPI
       </h1>
@@ -13,6 +14,6 @@ export const NewKpiPageClient = () => {
       </p>
 
       <KpiCreationForm />
-    </div>
+    </MaxWidthWrapper>
   )
 }

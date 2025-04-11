@@ -4,10 +4,8 @@ import { SimulationsContainer } from '@/components/simulations/simulations-conta
 
 export default function SimulationsClientPage() {
   return (
-    <div>
-      <div className="mt-3">
-        <SimulationsContainer />
-      </div>
+    <div className="mt-3">
+      <SimulationsContainer />
     </div>
   )
 }

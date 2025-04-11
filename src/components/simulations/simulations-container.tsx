@@ -7,11 +7,13 @@ import { cn } from '@/lib/utils'
 import { Simulation, Workspace } from '@prisma/client'
 import { RefreshCcw } from 'lucide-react'
 import { useState } from 'react'
+import { useModal } from '../modals/modal-provider'
 import { SimulationCard } from './simulation-card'
 
 export const SimulationsContainer = () => {
   const [view, setView] = useState<'compact' | 'loose'>('compact')
   const { simulations, isLoading, mutate, isValidating } = useSimulations()
+  const { setShowNewSimulationModal } = useModal()
 
   return (
     <MaxWidthWrapper>
@@ -32,6 +34,13 @@ export const SimulationsContainer = () => {
           variant="outline"
         >
           {view === 'compact' ? 'Ver como: Cards' : 'Ver como: Linhas'}
+        </Button>
+
+        <Button
+          className="ml-auto"
+          onClick={() => setShowNewSimulationModal(true)}
+        >
+          Nova simulação
         </Button>
       </div>
 

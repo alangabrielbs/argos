@@ -1,3 +1,4 @@
+import { withWorkspace } from '@/lib/auth/with-workspace'
 import db from '@/lib/db'
 import { getSearchParams } from '@/lib/urls'
 import { createSimulationSchema } from '@/lib/zod/schemas/simulations'
@@ -6,8 +7,6 @@ import { NextResponse } from 'next/server'
 export const GET = async (request: Request) => {
   const searchParams = getSearchParams(request.url)
   const { query, workspaceId, kpi } = searchParams
-
-  console.log({ kpi })
 
   const simulations = await db.simulation.findMany({
     where: {
@@ -68,14 +67,15 @@ export const GET = async (request: Request) => {
   return NextResponse.json({ simulations })
 }
 
-export const POST = async (request: Request) => {
-  const { name } = await createSimulationSchema.parseAsync(await request.json())
+export const POST = withWorkspace(async ({ req, workspace }) => {
+  const { name } = await createSimulationSchema.parseAsync(await req.json())
 
-  // const simulation = await db.simulation.create({
-  //   data: {
-  //     name,
-  //   },
-  // })
+  const simulation = await db.simulation.create({
+    data: {
+      name,
+      workspaceId: workspace.id,
+    },
+  })
 
-  return NextResponse.json({ simulation: 'ok' })
-}
+  return NextResponse.json({ simulation })
+})
