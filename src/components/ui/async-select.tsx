@@ -122,6 +122,11 @@ export function AsyncSelect<T>({
         const data = await fetcher(value)
         setOriginalOptions(data)
         setOptions(data)
+
+        if (data.length === 1) {
+          const option = data[0]
+          handleSelect(getOptionValue(option))
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Falha ao carregar opções'
@@ -134,7 +139,7 @@ export function AsyncSelect<T>({
     if (!mounted) {
       initializeOptions()
     }
-  }, [mounted, fetcher, value])
+  }, [mounted, fetcher, value, getOptionValue])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {

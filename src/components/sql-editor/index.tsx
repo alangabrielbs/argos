@@ -1,58 +1,35 @@
 'use client'
 
-import { Button } from '@/components/ui/button-shadcn'
+import { useSnippets } from '@/lib/swr/use-snippets'
 import Editor, { type Monaco } from '@monaco-editor/react'
-import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useSqlSnippetsModal } from '../modals/sql-snippets-modal'
-import {
-  CustomAutocompleteModal,
-  type CustomSnippet,
-} from './custom-autocomplete-modal'
 
-export function SqlEditor() {
-  const [value, setValue] = useState<string | undefined>(
-    '\n\n\n-- Escreva seu SQL aqui'
-  )
+export function SqlEditor({
+  value: defaultValue,
+  setValue: setDefaultValue,
+}: {
+  value?: string
+  setValue?: (value?: string) => void
+}) {
+  const [value, setValue] = useState<string | undefined>(defaultValue)
   const [isClient, setIsClient] = useState(false)
-  const [customSnippetsModalOpen, setCustomSnippetsModalOpen] = useState(false)
-  const [customSnippets, setCustomSnippets] = useState<CustomSnippet[]>([])
-  const [editorInstance, setEditorInstance] = useState<any>(null)
   const [monacoInstance, setMonacoInstance] = useState<Monaco | null>(null)
 
-  // Carregar snippets personalizados do localStorage
+  const { isLoading, snippets, isValidating } = useSnippets()
+
   useEffect(() => {
     setIsClient(true)
-    if (typeof window !== 'undefined') {
-      try {
-        const savedSnippets = localStorage.getItem('sqlEditorCustomSnippets')
-        if (savedSnippets) {
-          setCustomSnippets(JSON.parse(savedSnippets))
-        }
-      } catch (error) {
-        console.error('Erro ao carregar snippets personalizados:', error)
-      }
-    }
   }, [])
 
-  // Atualizar as sugestões quando os snippets personalizados mudarem
   useEffect(() => {
-    if (monacoInstance) {
+    if (monacoInstance && !isLoading && !isValidating) {
       registerCompletionProvider(monacoInstance)
     }
-  }, [monacoInstance])
-
-  // Salvar snippets personalizados no localStorage
-  const saveCustomSnippets = (snippets: CustomSnippet[]) => {
-    setCustomSnippets(snippets)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('sqlEditorCustomSnippets', JSON.stringify(snippets))
-    }
-  }
+  }, [monacoInstance, isValidating, isLoading])
 
   const registerCompletionProvider = (monaco: Monaco) => {
     // Registrar novo provedor com todos os snippets atualizados
-    const disposable = monaco.languages.registerCompletionItemProvider('sql', {
+    monaco.languages.registerCompletionItemProvider('sql', {
       provideCompletionItems: (model, position) => {
         const word = model.getWordUntilPosition(position)
         const range = {
@@ -159,6 +136,17 @@ export function SqlEditor() {
               detail: 'SELECT query snippet',
               range,
             },
+
+            // Workspace custom snippets
+            ...(snippets || []).map(snippet => ({
+              label: snippet.name,
+              kind: monaco.languages.CompletionItemKind.Snippet,
+              insertTextRules:
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              insertText: snippet.code,
+              detail: snippet.description ?? '',
+              range,
+            })),
           ],
         }
       },
@@ -166,7 +154,6 @@ export function SqlEditor() {
   }
 
   const handleEditorDidMount = (editor: any, monaco: Monaco) => {
-    setEditorInstance(editor)
     setMonacoInstance(monaco)
 
     // Inicializar o provedor de autocompletion
@@ -175,45 +162,36 @@ export function SqlEditor() {
     editor.focus()
   }
 
-  if (!isClient) {
-    return <div className="h-96 w-full animate-pulse bg-muted" />
+  if (isLoading || !isClient) {
+    return <div className="h-96 w-full animate-pulse bg-slate-100" />
   }
 
   return (
-    <>
-      {/* <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setShowSqlSnippetsModal(true)}
-      >
-        <Settings className="h-4 w-4 mr-2" />
-        Gerenciar Autocompletes
-      </Button> */}
-
-      <div className="border shadow-xs">
-        <div className="h-96 w-full">
-          <Editor
-            height="100%"
-            defaultLanguage="sql"
-            defaultValue={value}
-            onChange={setValue}
-            onMount={handleEditorDidMount}
-            options={{
-              minimap: { enabled: false },
-              scrollBeyondLastLine: false,
-              fontSize: 14,
-              fontFamily: 'var(--font-geist-mono)',
-              wordWrap: 'on',
-              automaticLayout: true,
-              scrollBeyondLastColumn: 0,
-              cursorWidth: 0,
-              overviewRulerLanes: 0,
-              renderLineHighlight: 'gutter',
-            }}
-          />
-        </div>
+    <div className="border shadow-xs">
+      <div className="h-96 w-full">
+        <Editor
+          height="100%"
+          defaultLanguage="sql"
+          defaultValue={value}
+          onChange={value => {
+            setValue(value)
+            setDefaultValue?.(value)
+          }}
+          onMount={handleEditorDidMount}
+          options={{
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            fontSize: 14,
+            fontFamily: 'var(--font-geist-mono)',
+            wordWrap: 'on',
+            automaticLayout: true,
+            scrollBeyondLastColumn: 0,
+            cursorWidth: 0,
+            overviewRulerLanes: 0,
+            renderLineHighlight: 'gutter',
+          }}
+        />
       </div>
-    </>
+    </div>
   )
 }

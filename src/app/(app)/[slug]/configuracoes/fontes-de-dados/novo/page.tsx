@@ -9,8 +9,9 @@ export default async function SettingsConnectionsNewPage({
   }>
 }) {
   const { slug } = await params
+
   return (
-    <MaxWidthWrapper className="flex flex-col mt-6">
+    <MaxWidthWrapper className="flex flex-col mt-8">
       <header className="flex items-center justify-between border-b border-gray-200 pb-4">
         <h1 className="text-lg font-medium leading-6 text-gray-900">
           Selecione o tipo de fonte de dados

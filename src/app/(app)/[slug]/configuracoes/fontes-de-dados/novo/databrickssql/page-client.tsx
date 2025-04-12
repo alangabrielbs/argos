@@ -15,8 +15,9 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { mutate } from 'swr'
 import { z } from 'zod'
 
 const createDatabricksConnection = z.object({
@@ -36,21 +37,42 @@ const createDatabricksConnection = z.object({
   schema: z.string().optional(),
 })
 
+// var token           = "dapia95f5d66372eb44098f613eb407afe6a";
+// var server_hostname = "dbc-8109e503-71da.cloud.databricks.com";
+// var http_path       = "/sql/1.0/warehouses/ae67401a14a67c4b";
+
 export const CreateDatabricksConnectionPageClient = () => {
+  const router = useRouter()
   const { slug } = useParams() as { slug: string }
   const form = useForm<z.infer<typeof createDatabricksConnection>>({
     resolver: zodResolver(createDatabricksConnection),
   })
 
   const onSubmit = form.handleSubmit(async data => {
-    console.log(data)
+    try {
+      const response = await fetch(`/api/${slug}/settings/data-sources`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        await mutate(`/api/${slug}/settings/data-sources`)
+
+        router.push(`/${slug}/configuracoes/fontes-de-dados`)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   })
 
   return (
     <MaxWidthWrapper className="mt-8">
-      <h2 className="text-lg font-semibold leading-7 text-gray-900">
+      <h1 className="text-lg font-medium leading-6 text-gray-900">
         Nova fonte de dados SQL do Databricks
-      </h2>
+      </h1>
       <p className="mt-1 text-sm leading-6 text-gray-500">
         Adicione um banco de dados SQL do Databricks para que o Argos possa
         extrair dados.

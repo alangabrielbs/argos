@@ -1,7 +1,10 @@
+import { createSnippetFormSchema } from '@/lib/zod/schemas/snippets'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Braces } from 'lucide-react'
+import { useParams } from 'next/navigation'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { mutate } from 'swr'
 import { z } from 'zod'
 import { Modal } from '../modal'
 import { Button } from '../ui/button'
@@ -18,29 +21,6 @@ import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
 import { Textarea } from '../ui/textarea'
 
-const createSnippetFormSchema = z.object({
-  name: z
-    .string({
-      required_error: 'Nome é obrigatório',
-    })
-    .min(1, { message: 'Nome é obrigatório' }),
-  description: z
-    .string({
-      required_error: 'Descrição é obrigatória',
-    })
-    .min(1, { message: 'Descrição é obrigatória' })
-    .max(50, {
-      message: 'Máximo de 50 caracteres',
-    }),
-  documentation: z.string().optional(),
-  code: z
-    .string({
-      required_error: 'Código SQL é obrigatório',
-    })
-    .min(1, { message: 'Campo obrigatório' }),
-  isPublic: z.boolean().default(false),
-})
-
 const SqlSnippetsModal = ({
   setShowSqlSnippetsModal,
   showSqlSnippetsModal,
@@ -48,14 +28,25 @@ const SqlSnippetsModal = ({
   setShowSqlSnippetsModal: Dispatch<SetStateAction<boolean>>
   showSqlSnippetsModal: boolean
 }) => {
+  const { slug } = useParams() as { slug: string }
   const form = useForm<z.infer<typeof createSnippetFormSchema>>({
     resolver: zodResolver(createSnippetFormSchema),
   })
 
   const onSubmit = form.handleSubmit(async data => {
-    console.log('Snippet criado:', data)
+    try {
+      await fetch(`/api/${slug}/settings/snippets`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
 
-    setShowSqlSnippetsModal(false)
+      mutate(`/api/${slug}/settings/snippets`)
+
+      setShowSqlSnippetsModal(false)
+      form.reset()
+    } catch (err) {
+      console.log(err)
+    }
   })
 
   return (

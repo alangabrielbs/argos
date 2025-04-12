@@ -1,18 +1,16 @@
 'use client'
 
+import { getDataSources } from '@/lib/actions/get-data-sources'
 import { getKpis } from '@/lib/actions/get-kpis'
 import { skipRequestWithDeduplication } from '@/lib/skip-duplicated-requests'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Formula } from '@prisma/client'
-import { Plus, X } from 'lucide-react'
-import { nanoid } from 'nanoid'
+import { DatabricksSQLDataSource, Formula } from '@prisma/client'
+import { X } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AnimatedSizeContainer } from '../animated-size-container'
-import { Filter, OnChangeField } from '../filter/filter'
-import { FilterSelect } from '../filter/filter-select'
 import { SqlEditor } from '../sql-editor'
 import { AsyncSelect } from '../ui/async-select'
 import { Button } from '../ui/button'
@@ -25,23 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
-import { Label } from '../ui/label'
 import { MultiSelection } from '../ui/multi-selection'
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger,
-} from '../ui/multi-selector'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
 import {
   Sheet,
   SheetClose,
@@ -51,24 +33,30 @@ import {
 } from '../ui/sheet'
 import { useSqlSnippetsModal } from './sql-snippets-modal'
 
+const queryDefaultValue = '\n\n\n-- Escreva seu SQL aqui'
+
 const createExecuteSimulationFormSchema = z.object({
-  request: z
+  dataSourceId: z.string({
+    required_error: 'Campo obrigatório',
+  }),
+  formulasId: z
+    .array(
+      z
+        .string({
+          required_error: 'Campo obrigatório',
+        })
+        .cuid()
+    )
+    .min(1, {
+      message: 'Selecione pelo menos um KPI',
+    }),
+  query: z
     .string({
       required_error: 'Campo obrigatório',
     })
-    .min(1, {
+    .refine(value => value !== queryDefaultValue, {
       message: 'Campo obrigatório',
     }),
-  formulaId: z.array(
-    z
-      .string({
-        required_error: 'Campo obrigatório',
-      })
-      .cuid()
-      .min(1, {
-        message: 'Campo obrigatório',
-      })
-  ),
 })
 
 const ExecuteSimulationModal = ({
@@ -82,7 +70,8 @@ const ExecuteSimulationModal = ({
   const form = useForm<z.infer<typeof createExecuteSimulationFormSchema>>({
     resolver: zodResolver(createExecuteSimulationFormSchema),
     defaultValues: {
-      formulaId: [],
+      formulasId: [],
+      query: queryDefaultValue,
     },
   })
   const { SqlSnippetsModal, SqlSnippetsButton } = useSqlSnippetsModal()
@@ -90,43 +79,6 @@ const ExecuteSimulationModal = ({
   const onSubmit = form.handleSubmit(data => {
     console.log({ data })
   })
-
-  const options = [
-    {
-      id: 'cm956zcd30009sf0ymedaj704',
-      name: '[KPI] Unit +5%',
-      description: '',
-      expression:
-        '((occurence_value_projetado/orders_concluded_projetado) + ( (occurence_value_projetado/orders_concluded_projetado) * 0.05))',
-      createdAt: '2025-04-06T05:18:28.672Z',
-      updatedAt: '2025-04-07T21:04:05.289Z',
-      variables: [
-        {
-          id: 'cm956zcd3000asf0ykj9gyte0',
-          name: 'occurence_value_projetado',
-          description: null,
-          key: null,
-          exampleValue: 120,
-          formulaId: 'cm956zcd30009sf0ymedaj704',
-          createdAt: '2025-04-06T05:18:28.672Z',
-          updatedAt: '2025-04-06T05:18:28.672Z',
-        },
-        {
-          id: 'cm956zcd3000bsf0y9t0010jr',
-          name: 'orders_concluded_projetado',
-          description: null,
-          key: null,
-          exampleValue: 150,
-          formulaId: 'cm956zcd30009sf0ymedaj704',
-          createdAt: '2025-04-06T05:18:28.672Z',
-          updatedAt: '2025-04-06T05:18:28.672Z',
-        },
-      ],
-      _count: {
-        executions: 1,
-      },
-    },
-  ]
 
   return (
     <>
@@ -159,30 +111,40 @@ const ExecuteSimulationModal = ({
                 <form onSubmit={onSubmit} className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="request"
+                    name="dataSourceId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Conexão</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione uma fonte de dados" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Unit_Projetado">
+                        <FormLabel>Fonte de dados</FormLabel>
+                        <FormControl>
+                          <AsyncSelect<DatabricksSQLDataSource>
+                            fetcher={value =>
+                              skipRequestWithDeduplication(
+                                `data-source-${value}`,
+                                () =>
+                                  getDataSources({
+                                    slug: slug as string,
+                                    query: value,
+                                  })
+                              )
+                            }
+                            label="Fonte de dados"
+                            width={601}
+                            getDisplayValue={item => item.name}
+                            getOptionValue={item => item.id}
+                            onChange={field.onChange}
+                            renderOption={item => (
                               <div className="flex items-center gap-x-2">
-                                Unit Projetado
+                                <div className="text-sm font-medium">
+                                  {item.name}
+                                </div>
                               </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                            )}
+                            value={field.value}
+                            placeholder="Selecione uma fonte de dados"
+                          />
+                        </FormControl>
                         <FormDescription>
-                          A fonte de dados é a tabela que será utilizada na
-                          execução.
+                          A fonte de dados é de onde os dados serão extraídos.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -191,7 +153,7 @@ const ExecuteSimulationModal = ({
 
                   <FormField
                     control={form.control}
-                    name="formulaId"
+                    name="formulasId"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>KPI</FormLabel>
@@ -225,10 +187,25 @@ const ExecuteSimulationModal = ({
                     )}
                   />
 
-                  <div>
-                    <SqlSnippetsButton />
-                    <SqlEditor />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="query"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Query</FormLabel>
+                        <FormControl>
+                          <div>
+                            <SqlSnippetsButton />
+                            <SqlEditor
+                              setValue={field.onChange}
+                              value={field.value}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   {/* <div>
                   <Label className="data-[error=true]:text-destructive">
