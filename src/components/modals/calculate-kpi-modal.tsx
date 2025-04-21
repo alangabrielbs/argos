@@ -147,6 +147,7 @@ const CalculateKpiModal = ({
                     ))}
                   </SelectContent>
                 </Select>
+
                 <FormMessage />
               </FormItem>
             )}

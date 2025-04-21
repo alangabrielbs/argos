@@ -6,7 +6,6 @@ import { useCalculateKpi } from '@/components/modals/calculate-kpi-modal'
 import { Button } from '@/components/ui/button'
 import { ExecutionsResponse, useExecutions } from '@/lib/swr/use-executions'
 import { JsonValue } from '@prisma/client/runtime/library'
-import { format } from 'date-fns'
 import { useState } from 'react'
 import { ExecutionTitle } from './execution-title'
 import { ExecutionsCardSkeleton } from './executions-card-skeleton'
@@ -18,7 +17,7 @@ export const ExecutionsContainer = () => {
     <MaxWidthWrapper>
       <ExecutionsList
         loading={isLoading || isValidating}
-        view="compact"
+        view="loose"
         executions={executions}
       />
     </MaxWidthWrapper>
